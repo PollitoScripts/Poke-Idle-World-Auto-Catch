@@ -24,7 +24,8 @@ Borra todo el texto que aparezca por defecto en el editor.
 Copia y pega el código que tienes abajo.
 
 ---
-´´´bash
+//;
+
 // ==UserScript==
 // @name         Auto-clicker "Throw" - Poke Idle World
 // @namespace    http://tampermonkey.net/
@@ -72,6 +73,7 @@ Copia y pega el código que tienes abajo.
     }, INTERVALO);
 })();
 
+//;
 ---
 
 Guarda el script:
