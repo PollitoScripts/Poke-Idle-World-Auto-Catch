@@ -27,10 +27,10 @@ Copia y pega el código que tienes abajo.
 ```javascript
 
 // ==UserScript==
-// @name         Auto-clicker "Throw" - Poke Idle World
+// @name         Throw - Poke Idle World
 // @namespace    http://tampermonkey.net/
-// @version      1.1
-// @description  Pulsa automáticamente el botón "Throw" en Poke Idle World simulando clics reales.
+// @version      1.3
+// @description  Pulsa el botón "Throw" imitando a un jugador promedio, sin dejar rastro en la consola.
 // @author       PollitoScripts
 // @match        *://poke.idleworld.online/*
 // @grant        none
@@ -39,12 +39,6 @@ Copia y pega el código que tienes abajo.
 (function() {
     'use strict';
 
-    // Intervalo de comprobación en milisegundos (1000ms = 1 segundo)
-    // Puedes bajarlo a 500 (medio segundo) si quieres que sea más rápido.
-    const INTERVALO = 1000;
-
-    // Función para simular un clic físico real (MouseDown -> MouseUp -> Click)
-    // Esto engaña al motor del juego para que crea que lo ha pulsado un humano.
     function simularClicReal(elemento) {
         const opciones = { bubbles: true, cancelable: true, view: window };
         elemento.dispatchEvent(new MouseEvent('mousedown', opciones));
@@ -52,25 +46,47 @@ Copia y pega el código que tienes abajo.
         elemento.dispatchEvent(new MouseEvent('click', opciones));
     }
 
-    setInterval(() => {
-        // Buscamos cualquier elemento en la página
+    // Genera un número aleatorio entre un mínimo y un máximo de milisegundos
+    function obtenerTiempoAleatorio(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function buscarYFuego() {
         const elementos = document.querySelectorAll('*');
+        let botonEncontrado = null;
 
         for (let elemento of elementos) {
-            // Buscamos si el elemento contiene el texto "Throw"
-            // Usamos .includes() en lugar de coincidencia exacta por si tiene espacios ocultos
             if (elemento.textContent && elemento.textContent.trim() === "Throw") {
-
-                // Nos aseguramos de que sea un elemento interactivo visible y no un contenedor grande
                 if (elemento.offsetWidth > 0 && elemento.offsetHeight > 0 && elemento.tagName !== 'BODY' && elemento.tagName !== 'HTML') {
-
-                    simularClicReal(elemento);
-                    console.log("¡Lanzamiento automatizado ejecutado!");
-                    break; // Detiene el bucle actual para no repetir clics en el mismo segundo
+                    botonEncontrado = elemento;
+                    break;
                 }
             }
         }
-    }, INTERVALO);
+
+        if (botonEncontrado) {
+            // Tarda entre 600ms (poco más de medio segundo) y 1600ms (segundo y medio) en reaccionar y hacer clic.
+            const tiempoReaccion = obtenerTiempoAleatorio(600, 1600);
+
+            setTimeout(() => {
+                simularClicReal(botonEncontrado);
+
+                // Tras lanzar, el jugador promedio se relaja. Espera entre 2 y 2.5 segundos antes de buscar el siguiente Pokémon.
+                buclePrincipal(obtenerTiempoAleatorio(2000, 2500));
+            }, tiempoReaccion);
+
+        } else {
+            // Si no hay botón en pantalla, el jugador promedio "mira" de vez en cuando (cada 1.5 a 3 segundos)
+            buclePrincipal(obtenerTiempoAleatorio(1500, 3000));
+        }
+    }
+
+    function buclePrincipal(retraso) {
+        setTimeout(buscarYFuego, retraso);
+    }
+
+    // El script arranca tras un pequeño retraso inicial aleatorio
+    buclePrincipal(obtenerTiempoAleatorio(1000, 2500));
 })();
 
 ```
