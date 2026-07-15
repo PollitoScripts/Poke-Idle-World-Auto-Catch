@@ -11,7 +11,7 @@ Este script automatiza el lanzamiento de pokéballs haciendo clic en el botón "
 ## 🛠️ Instrucciones de Instalación:
 Instala un gestor de scripts en tu navegador (Opera, Chrome, Brave o Edge):
 
-Descarga e instala la extensión Tampermonkey (o Violentmonkey). [![Descargar Tampermonkey](https://img.shields.io/badge/Descargar-Tampermonkey-black?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://www.tampermonkey.net/)
+Descarga e instala la extensión [![Descargar Tampermonkey](https://img.shields.io/badge/Descargar-Tampermonkey-black?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://www.tampermonkey.net/)
 
 Crea el script:
 
