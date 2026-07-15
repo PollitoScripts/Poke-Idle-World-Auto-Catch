@@ -24,7 +24,7 @@ Borra todo el texto que aparezca por defecto en el editor.
 Copia y pega el código que tienes abajo.
 
 ---
-//;
+```javascript
 
 // ==UserScript==
 // @name         Auto-clicker "Throw" - Poke Idle World
@@ -73,7 +73,7 @@ Copia y pega el código que tienes abajo.
     }, INTERVALO);
 })();
 
-//;
+```
 ---
 
 Guarda el script:
