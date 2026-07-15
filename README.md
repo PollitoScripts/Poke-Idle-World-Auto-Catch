@@ -80,4 +80,10 @@ Guarda el script:
 
 Ve al menú Archivo > Guardar (o presiona Ctrl + S).
 
+---
+
+Por ultimo Click derecho en la extenesion, --> Administrar Extension --> activas la opcion de (Permitir secuencia de comandos de usuario).
+
+---
+
 ¡Listo! Entra en Poke Idle World, recarga la página y verás cómo el juego lanza automáticamente cada vez que aparece el botón.
