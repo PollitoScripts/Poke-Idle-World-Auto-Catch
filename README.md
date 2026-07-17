@@ -152,7 +152,7 @@ Recargas la pagina de Poke Idle Word y a Disfrutar
 
 ---
 
-🤖 Si usas Android (La opción más fácil)
+## 🤖 Si usas Android (La opción más fácil)
 
 ---
 
@@ -173,7 +173,7 @@ Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el ju
 
 --- 
 
-🍏 Si usas iPhone / iPad (iOS)
+## 🍏 Si usas iPhone / iPad (iOS)
 
 ---
 
