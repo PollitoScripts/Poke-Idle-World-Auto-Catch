@@ -193,7 +193,10 @@ Ve a los Ajustes de tu iPhone > Safari > Extensiones y activa "Userscripts".
 
 Abre Safari, toca el botón de las extensiones (el icono de las piezas de puzle o las letras aA), abre Userscripts y crea un nuevo script pegando el código de la v2.0.
 
-⚠️ Un aviso muy importante sobre el "Segundo Plano" en móviles
+---
+
+## ⚠️ Un aviso muy importante sobre el "Segundo Plano" en móviles
+
 A diferencia del ordenador, los sistemas operativos de los móviles (tanto Android como iOS) son ultra agresivos con el ahorro de batería.
 
 ¿Qué significa esto? Si minimizas el navegador en el móvil, abres WhatsApp o bloqueas la pantalla, el móvil "congelará" la pestaña del juego casi de inmediato para no gastar batería, por lo que el script se pausará.
