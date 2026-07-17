@@ -169,7 +169,7 @@ Toca los tres puntos de arriba a la derecha en Kiwi, baja del todo y verás el i
 
 Crea un nuevo script, borra el texto por defecto, pega el código de la v2.0 y dale a Guardar (Ctrl+S o Archivo > Guardar).
 
-Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el juego se ve raro) y empezará a lanzar solo.
+Abre de nuevo o recarga la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el juego se ve raro) y empezará a lanzar solo.
 
 --- 
 
