@@ -184,7 +184,7 @@ Descarga Orion Browser desde la App Store (es un navegador ultrarrápido diseña
 
 Abre Orion, ve a la Chrome Web Store e instala Tampermonkey.
 
-Abre la extensión, añade el script v2.0 y guarda.
+Abre la extensión, añade el script y guarda.
 
 ## Opción B: Safari + la app "Userscripts"
 Descarga la aplicación llamada Userscripts (es gratuita y tiene el icono de una </>) desde la App Store.
