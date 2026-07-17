@@ -27,10 +27,10 @@ Copia y pega el código que tienes abajo.
 ```javascript
 
 // ==UserScript==
-// @name         Throw - Poke Idle World
+// @name         Throw - Poke Idle World (Con Interfaz)
 // @namespace    http://tampermonkey.net/
-// @version      2.0
-// @description  Detector de Shinies ultra-preciso limitado solo a la zona de captura activa para evitar falsos positivos.
+// @version      3.2
+// @description  Interfaz gráfica abajo a la derecha. Clics corregidos usando LocalStorage nativo.
 // @author       PollitoScripts
 // @match        *://poke.idleworld.online/*
 // @grant        none
@@ -39,14 +39,31 @@ Copia y pega el código que tienes abajo.
 (function() {
     'use strict';
 
+    // 1. SISTEMA DE GUARDADO NATIVO (Sin Sandbox de Tampermonkey)
+    function cargarConfig(clave, valorPorDefecto) {
+        try {
+            const guardado = localStorage.getItem(clave);
+            if (guardado) return JSON.parse(guardado);
+        } catch(e) {}
+        return valorPorDefecto;
+    }
+
+    function guardarConfig(clave, valor) {
+        localStorage.setItem(clave, JSON.stringify(valor));
+    }
+
+    let prioridadesNormal = cargarConfig("pollito_normal", ["Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]);
+    let prioridadesShiny = cargarConfig("pollito_shiny", ["Idle Ball", "Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]);
+
+    // 2. FUNCIONES BASE
     function obtenerTiempoAleatorio(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     async function simularClicReal(elemento) {
         if (!elemento) return;
+        // Al usar @grant none, 'window' vuelve a ser la ventana real del juego, validando el clic
         const opciones = { bubbles: true, cancelable: true, view: window };
-        
         elemento.dispatchEvent(new MouseEvent('mousedown', opciones));
         await new Promise(resolve => setTimeout(resolve, obtenerTiempoAleatorio(10, 30)));
         elemento.dispatchEvent(new MouseEvent('mouseup', opciones));
@@ -63,55 +80,43 @@ Copia y pega el código que tienes abajo.
         return null;
     }
 
-    // NUEVO DETECTOR QUIRÚRGICO: Solo busca el emoji ✨ dentro de la caja de captura activa
     function esShinyActivo(botonThrow) {
         if (!botonThrow) return false;
-        
-        // Buscamos la caja de captura activa donde vive el botón "Throw"
-        const cajaCaptura = botonThrow.closest('.capture-box, #capture, [class*="capture" i]') 
+        const cajaCaptura = botonThrow.closest('.capture-box, #capture, [class*="capture" i]')
                            || botonThrow.parentElement.parentElement.parentElement;
-        
         if (cajaCaptura) {
-            const textoCaja = cajaCaptura.textContent || '';
-            // Si el emoji ✨ está específicamente dentro de esta caja, es un Shiny activo
-            if (textoCaja.includes('✨')) {
-                return true;
-            }
+            if ((cajaCaptura.textContent || '').includes('✨')) return true;
         }
         return false;
     }
 
+    // 3. LÓGICA DE CAPTURA
     function buscarYFuego() {
         const botonThrowGenerico = buscarBotonThrow();
 
         if (botonThrowGenerico) {
             let bolaAEquipar = null;
-            const esShiny = esShinyActivo(botonThrowGenerico); // Pasamos el botón para localizar la zona exacta
+            const esShiny = esShinyActivo(botonThrowGenerico);
 
-            // Jerarquía estricta de recursos
-            const listaPrioridades = esShiny 
-                ? ["Idle Ball", "Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]
-                : ["Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"];
+            const listaPrioridades = esShiny ? prioridadesShiny : prioridadesNormal;
 
             for (let nombreBall of listaPrioridades) {
                 const selector = `button[title="${nombreBall}" i], button[title="${nombreBall.replace('Poke', 'Poké')}" i]`;
                 const botonBall = document.querySelector(selector);
-                
+
                 if (botonBall && !botonBall.disabled) {
                     if (!botonBall.classList.contains('on')) {
                         bolaAEquipar = botonBall;
                     }
-                    break; 
+                    break;
                 }
             }
 
-            // Tiempos rápidos de reacción para que no se acumulen
             const tiempoReaccion = obtenerTiempoAleatorio(250, 600);
 
             setTimeout(async () => {
                 if (bolaAEquipar) {
                     await simularClicReal(bolaAEquipar);
-                    
                     setTimeout(async () => {
                         const botonThrowConfirmar = buscarBotonThrow();
                         if (botonThrowConfirmar) await simularClicReal(botonThrowConfirmar);
@@ -119,8 +124,6 @@ Copia y pega el código que tienes abajo.
                 } else {
                     await simularClicReal(botonThrowGenerico);
                 }
-                
-                // Pausa post-captura rápida para limpiar la cola
                 buclePrincipal(obtenerTiempoAleatorio(900, 1400));
             }, tiempoReaccion);
 
@@ -133,7 +136,106 @@ Copia y pega el código que tienes abajo.
         setTimeout(buscarYFuego, retraso);
     }
 
-    buclePrincipal(obtenerTiempoAleatorio(500, 1200));
+    // 4. INTERFAZ GRÁFICA (GUI) ABAJO A LA DERECHA
+    function crearInterfaz() {
+        const estilos = document.createElement('style');
+        estilos.innerHTML = `
+            #pollito-btn-config { position: fixed; bottom: 20px; right: 20px; z-index: 10000; background: #34495e; color: white; border: 2px solid #f1c40f; padding: 10px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0px 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
+            #pollito-btn-config:hover { transform: scale(1.1); }
+            #pollito-panel { position: fixed; bottom: 80px; right: 20px; z-index: 10000; background: #2c3e50; color: white; border: 2px solid #f1c40f; padding: 15px; border-radius: 8px; width: 280px; font-family: Arial, sans-serif; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); display: none; }
+            .pollito-seccion { margin-bottom: 15px; }
+            .pollito-titulo { font-size: 14px; font-weight: bold; color: #f1c40f; margin-bottom: 8px; border-bottom: 1px solid #7f8c8d; padding-bottom: 3px; }
+            .pollito-item { display: flex; justify-content: space-between; align-items: center; background: #34495e; padding: 5px 8px; margin-bottom: 4px; border-radius: 4px; font-size: 12px; }
+            .pollito-botones button { background: #e67e22; color: white; border: none; padding: 2px 6px; margin-left: 2px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+            .pollito-botones button:hover { background: #d35400; }
+            #pollito-guardar { width: 100%; background: #27ae60; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 5px; }
+            #pollito-guardar:hover { background: #219653; }
+        `;
+        document.head.appendChild(estilos);
+
+        const botonConfig = document.createElement('div');
+        botonConfig.id = 'pollito-btn-config';
+        botonConfig.innerHTML = '⚙️';
+        document.body.appendChild(botonConfig);
+
+        const panel = document.createElement('div');
+        panel.id = 'pollito-panel';
+        panel.innerHTML = `
+            <div style="font-weight:bold; text-align:center; margin-bottom:10px; font-size:15px; color:#f1c40f;">PollitoScripts v3.2</div>
+            <div class="pollito-seccion">
+                <div class="pollito-titulo">Prioridad Normal</div>
+                <div id="lista-normal"></div>
+            </div>
+            <div class="pollito-seccion">
+                <div class="pollito-titulo">Prioridad Shiny ✨</div>
+                <div id="lista-shiny"></div>
+            </div>
+            <button id="pollito-guardar">Guardar Preferencias</button>
+        `;
+        document.body.appendChild(panel);
+
+        botonConfig.onclick = () => {
+            panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
+        };
+
+        function renderizarListas() {
+            const contenedorNormal = document.getElementById('lista-normal');
+            const contenedorShiny = document.getElementById('lista-shiny');
+
+            contenedorNormal.innerHTML = '';
+            contenedorShiny.innerHTML = '';
+
+            prioridadesNormal.forEach((ball, index) => {
+                const item = document.createElement('div');
+                item.className = 'pollito-item';
+                item.innerHTML = `
+                    <span>${index + 1}. ${ball}</span>
+                    <div class="pollito-botones">
+                        ${index > 0 ? `<button class="btn-subir-n" data-idx="${index}">🔼</button>` : ''}
+                        ${index < prioridadesNormal.length - 1 ? `<button class="btn-bajar-n" data-idx="${index}">🔽</button>` : ''}
+                    </div>
+                `;
+                contenedorNormal.appendChild(item);
+            });
+
+            prioridadesShiny.forEach((ball, index) => {
+                const item = document.createElement('div');
+                item.className = 'pollito-item';
+                item.innerHTML = `
+                    <span>${index + 1}. ${ball}</span>
+                    <div class="pollito-botones">
+                        ${index > 0 ? `<button class="btn-subir-s" data-idx="${index}">🔼</button>` : ''}
+                        ${index < prioridadesShiny.length - 1 ? `<button class="btn-bajar-s" data-idx="${index}">🔽</button>` : ''}
+                    </div>
+                `;
+                contenedorShiny.appendChild(item);
+            });
+
+            document.querySelectorAll('.btn-subir-n').forEach(btn => btn.onclick = () => moverItem(prioridadesNormal, parseInt(btn.dataset.idx), -1));
+            document.querySelectorAll('.btn-bajar-n').forEach(btn => btn.onclick = () => moverItem(prioridadesNormal, parseInt(btn.dataset.idx), 1));
+            document.querySelectorAll('.btn-subir-s').forEach(btn => btn.onclick = () => moverItem(prioridadesShiny, parseInt(btn.dataset.idx), -1));
+            document.querySelectorAll('.btn-bajar-s').forEach(btn => btn.onclick = () => moverItem(prioridadesShiny, parseInt(btn.dataset.idx), 1));
+        }
+
+        function moverItem(arr, index, direccion) {
+            const temp = arr[index];
+            arr[index] = arr[index + direccion];
+            arr[index + direccion] = temp;
+            renderizarListas();
+        }
+
+        document.getElementById('pollito-guardar').onclick = () => {
+            guardarConfig("pollito_normal", prioridadesNormal);
+            guardarConfig("pollito_shiny", prioridadesShiny);
+            alert("¡Preferencias de PollitoScripts guardadas correctamente!");
+            panel.style.display = 'none';
+        };
+
+        renderizarListas();
+    }
+
+    crearInterfaz();
+    buclePrincipal(obtenerTiempoAleatorio(1000, 2500));
 })();
 ```
 ---
