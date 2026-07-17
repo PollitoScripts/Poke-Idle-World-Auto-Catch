@@ -179,7 +179,7 @@ Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el ju
 
 En el ecosistema de Apple tienes dos opciones muy buenas:
 
-Opción A: Orion Browser (La más recomendada)
+## Opción A: Orion Browser (La más recomendada)
 Descarga Orion Browser desde la App Store (es un navegador ultrarrápido diseñado para iOS).
 
 Abre Orion, ve a la Chrome Web Store e instala Tampermonkey.
