@@ -29,8 +29,8 @@ Copia y pega el código que tienes abajo.
 // ==UserScript==
 // @name         Throw - Poke Idle World
 // @namespace    http://tampermonkey.net/
-// @version      1.3
-// @description  Pulsa el botón "Throw" imitando a un jugador promedio, sin dejar rastro en la consola.
+// @version      1.8
+// @description  Selección de Pokéballs 100% precisa leyendo el atributo "title" y la clase "on" del código nativo.
 // @author       PollitoScripts
 // @match        *://poke.idleworld.online/*
 // @grant        none
@@ -39,44 +39,94 @@ Copia y pega el código que tienes abajo.
 (function() {
     'use strict';
 
-    function simularClicReal(elemento) {
-        const opciones = { bubbles: true, cancelable: true, view: window };
-        elemento.dispatchEvent(new MouseEvent('mousedown', opciones));
-        elemento.dispatchEvent(new MouseEvent('mouseup', opciones));
-        elemento.dispatchEvent(new MouseEvent('click', opciones));
-    }
-
-    // Genera un número aleatorio entre un mínimo y un máximo de milisegundos
     function obtenerTiempoAleatorio(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function buscarYFuego() {
-        const elementos = document.querySelectorAll('*');
-        let botonEncontrado = null;
+    async function simularClicReal(elemento) {
+        if (!elemento) return;
+        const opciones = { bubbles: true, cancelable: true, view: window };
+        
+        elemento.dispatchEvent(new MouseEvent('mousedown', opciones));
+        await new Promise(resolve => setTimeout(resolve, obtenerTiempoAleatorio(15, 45)));
+        elemento.dispatchEvent(new MouseEvent('mouseup', opciones));
+        elemento.dispatchEvent(new MouseEvent('click', opciones));
+    }
 
+    // Busca el botón genérico "Throw"
+    function buscarBotonThrow() {
+        const elementos = document.querySelectorAll('button, div');
         for (let elemento of elementos) {
-            if (elemento.textContent && elemento.textContent.trim() === "Throw") {
-                if (elemento.offsetWidth > 0 && elemento.offsetHeight > 0 && elemento.tagName !== 'BODY' && elemento.tagName !== 'HTML') {
-                    botonEncontrado = elemento;
-                    break;
-                }
+            if ((elemento.textContent || '').trim().toLowerCase() === "throw" && elemento.offsetWidth > 0) {
+                return elemento;
             }
         }
+        return null;
+    }
 
-        if (botonEncontrado) {
-            // Tarda entre 600ms (poco más de medio segundo) y 1600ms (segundo y medio) en reaccionar y hacer clic.
+    // Detector de Shinies mediante el emoji
+    function esShinyActivo() {
+        const cajaCaptura = document.querySelector('.capture-box, #capture, [class*="capture"]');
+        if (cajaCaptura) {
+            if ((cajaCaptura.textContent || '').includes('✨')) return true;
+        }
+        const elementos = document.querySelectorAll('span, p, h1, h2, div');
+        for (let elemento of elementos) {
+            if (elemento.offsetWidth > 0 && (elemento.textContent || '').includes('✨')) return true;
+        }
+        return false;
+    }
+
+    function buscarYFuego() {
+        const botonThrowGenerico = buscarBotonThrow();
+
+        if (botonThrowGenerico) {
+            let bolaAEquipar = null;
+            const esShiny = esShinyActivo();
+
+            // Jerarquía de recursos
+            const listaPrioridades = esShiny 
+                ? ["Idle Ball", "Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]
+                : ["Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"];
+
+            // --- LA MAGIA NUEVA BASADA EN TU CAPTURA DE PANTALLA ---
+            for (let nombreBall of listaPrioridades) {
+                // Buscamos exactamente por el atributo "title" (y cubrimos la tilde de Poké Ball)
+                const selector = `button[title="${nombreBall}" i], button[title="${nombreBall.replace('Poke', 'Poké')}" i]`;
+                const botonBall = document.querySelector(selector);
+                
+                if (botonBall && !botonBall.disabled) {
+                    // Si el botón NO tiene la clase "on", significa que no está seleccionada. 
+                    if (!botonBall.classList.contains('on')) {
+                        bolaAEquipar = botonBall;
+                    }
+                    // Si ya tiene la clase "on" (bolaAEquipar se queda null), ya está equipada y no hace falta clickarla.
+                    break; 
+                }
+            }
+
             const tiempoReaccion = obtenerTiempoAleatorio(600, 1600);
 
-            setTimeout(() => {
-                simularClicReal(botonEncontrado);
-
-                // Tras lanzar, el jugador promedio se relaja. Espera entre 2 y 2.5 segundos antes de buscar el siguiente Pokémon.
+            setTimeout(async () => {
+                if (bolaAEquipar) {
+                    // Si hay que cambiar de bola, hacemos clic en ella primero
+                    await simularClicReal(bolaAEquipar);
+                    
+                    // Minipausa y clic en Throw para confirmar el lanzamiento
+                    setTimeout(async () => {
+                        const botonThrowConfirmar = buscarBotonThrow();
+                        if (botonThrowConfirmar) await simularClicReal(botonThrowConfirmar);
+                    }, obtenerTiempoAleatorio(150, 300));
+                } else {
+                    // Si la mejor bola ya estaba equipada (tenía la clase "on"), lanzamos directamente
+                    await simularClicReal(botonThrowGenerico);
+                }
+                
+                // Pausa post-captura
                 buclePrincipal(obtenerTiempoAleatorio(2000, 2500));
             }, tiempoReaccion);
 
         } else {
-            // Si no hay botón en pantalla, el jugador promedio "mira" de vez en cuando (cada 1.5 a 3 segundos)
             buclePrincipal(obtenerTiempoAleatorio(1500, 3000));
         }
     }
@@ -85,10 +135,8 @@ Copia y pega el código que tienes abajo.
         setTimeout(buscarYFuego, retraso);
     }
 
-    // El script arranca tras un pequeño retraso inicial aleatorio
     buclePrincipal(obtenerTiempoAleatorio(1000, 2500));
 })();
-
 ```
 ---
 
