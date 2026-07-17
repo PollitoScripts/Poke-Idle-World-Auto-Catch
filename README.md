@@ -29,8 +29,8 @@ Copia y pega el código que tienes abajo.
 // ==UserScript==
 // @name         Throw - Poke Idle World
 // @namespace    http://tampermonkey.net/
-// @version      1.8
-// @description  Selección de Pokéballs 100% precisa leyendo el atributo "title" y la clase "on" del código nativo.
+// @version      2.0
+// @description  Detector de Shinies ultra-preciso limitado solo a la zona de captura activa para evitar falsos positivos.
 // @author       PollitoScripts
 // @match        *://poke.idleworld.online/*
 // @grant        none
@@ -48,12 +48,11 @@ Copia y pega el código que tienes abajo.
         const opciones = { bubbles: true, cancelable: true, view: window };
         
         elemento.dispatchEvent(new MouseEvent('mousedown', opciones));
-        await new Promise(resolve => setTimeout(resolve, obtenerTiempoAleatorio(15, 45)));
+        await new Promise(resolve => setTimeout(resolve, obtenerTiempoAleatorio(10, 30)));
         elemento.dispatchEvent(new MouseEvent('mouseup', opciones));
         elemento.dispatchEvent(new MouseEvent('click', opciones));
     }
 
-    // Busca el botón genérico "Throw"
     function buscarBotonThrow() {
         const elementos = document.querySelectorAll('button, div');
         for (let elemento of elementos) {
@@ -64,15 +63,20 @@ Copia y pega el código que tienes abajo.
         return null;
     }
 
-    // Detector de Shinies mediante el emoji
-    function esShinyActivo() {
-        const cajaCaptura = document.querySelector('.capture-box, #capture, [class*="capture"]');
+    // NUEVO DETECTOR QUIRÚRGICO: Solo busca el emoji ✨ dentro de la caja de captura activa
+    function esShinyActivo(botonThrow) {
+        if (!botonThrow) return false;
+        
+        // Buscamos la caja de captura activa donde vive el botón "Throw"
+        const cajaCaptura = botonThrow.closest('.capture-box, #capture, [class*="capture" i]') 
+                           || botonThrow.parentElement.parentElement.parentElement;
+        
         if (cajaCaptura) {
-            if ((cajaCaptura.textContent || '').includes('✨')) return true;
-        }
-        const elementos = document.querySelectorAll('span, p, h1, h2, div');
-        for (let elemento of elementos) {
-            if (elemento.offsetWidth > 0 && (elemento.textContent || '').includes('✨')) return true;
+            const textoCaja = cajaCaptura.textContent || '';
+            // Si el emoji ✨ está específicamente dentro de esta caja, es un Shiny activo
+            if (textoCaja.includes('✨')) {
+                return true;
+            }
         }
         return false;
     }
@@ -82,51 +86,46 @@ Copia y pega el código que tienes abajo.
 
         if (botonThrowGenerico) {
             let bolaAEquipar = null;
-            const esShiny = esShinyActivo();
+            const esShiny = esShinyActivo(botonThrowGenerico); // Pasamos el botón para localizar la zona exacta
 
-            // Jerarquía de recursos
+            // Jerarquía estricta de recursos
             const listaPrioridades = esShiny 
                 ? ["Idle Ball", "Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]
                 : ["Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"];
 
             for (let nombreBall of listaPrioridades) {
-                // Buscamos exactamente por el atributo "title" (y cubrimos la tilde de Poké Ball)
                 const selector = `button[title="${nombreBall}" i], button[title="${nombreBall.replace('Poke', 'Poké')}" i]`;
                 const botonBall = document.querySelector(selector);
                 
                 if (botonBall && !botonBall.disabled) {
-                    // Si el botón NO tiene la clase "on", significa que no está seleccionada. 
                     if (!botonBall.classList.contains('on')) {
                         bolaAEquipar = botonBall;
                     }
-                    // Si ya tiene la clase "on" (bolaAEquipar se queda null), ya está equipada y no hace falta clickarla.
                     break; 
                 }
             }
 
-            const tiempoReaccion = obtenerTiempoAleatorio(600, 1600);
+            // Tiempos rápidos de reacción para que no se acumulen
+            const tiempoReaccion = obtenerTiempoAleatorio(250, 600);
 
             setTimeout(async () => {
                 if (bolaAEquipar) {
-                    // Si hay que cambiar de bola, hacemos clic en ella primero
                     await simularClicReal(bolaAEquipar);
                     
-                    // Minipausa y clic en Throw para confirmar el lanzamiento
                     setTimeout(async () => {
                         const botonThrowConfirmar = buscarBotonThrow();
                         if (botonThrowConfirmar) await simularClicReal(botonThrowConfirmar);
-                    }, obtenerTiempoAleatorio(150, 300));
+                    }, obtenerTiempoAleatorio(100, 200));
                 } else {
-                    // Si la mejor bola ya estaba equipada (tenía la clase "on"), lanzamos directamente
                     await simularClicReal(botonThrowGenerico);
                 }
                 
-                // Pausa post-captura
-                buclePrincipal(obtenerTiempoAleatorio(2000, 2500));
+                // Pausa post-captura rápida para limpiar la cola
+                buclePrincipal(obtenerTiempoAleatorio(900, 1400));
             }, tiempoReaccion);
 
         } else {
-            buclePrincipal(obtenerTiempoAleatorio(1500, 3000));
+            buclePrincipal(obtenerTiempoAleatorio(800, 1500));
         }
     }
 
@@ -134,7 +133,7 @@ Copia y pega el código que tienes abajo.
         setTimeout(buscarYFuego, retraso);
     }
 
-    buclePrincipal(obtenerTiempoAleatorio(1000, 2500));
+    buclePrincipal(obtenerTiempoAleatorio(500, 1200));
 })();
 ```
 ---
