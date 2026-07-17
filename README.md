@@ -142,15 +142,20 @@ Guarda el script:
 
 Ve al menú Archivo > Guardar (o presiona Ctrl + S).
 
----
-
 Por ultimo Click derecho en la extenesion, --> Administrar Extension --> activas la opcion de (Permitir secuencia de comandos de usuario).
+
+Recargas la pagina de Poke Idle Word y a Disfrutar
 
 ---
 
 ## 🛠️ Instrucciones de Instalación para Dispositivo Moviles:
 
+---
+
 🤖 Si usas Android (La opción más fácil)
+
+---
+
 En Android la mejor opción es Kiwi Browser. Es un navegador basado en Chromium (es decir, es idéntico a Chrome), pero tiene la ventaja de que te deja instalar cualquier extensión de la Chrome Web Store de PC.
 
 Pasos para configurarlo:
@@ -169,6 +174,9 @@ Crea un nuevo script, borra el texto por defecto, pega el código de la v2.0 y d
 --- 
 
 🍏 Si usas iPhone / iPad (iOS)
+
+---
+
 En el ecosistema de Apple tienes dos opciones muy buenas:
 
 Opción A: Orion Browser (La más recomendada)
