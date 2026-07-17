@@ -8,7 +8,7 @@ Este script automatiza el lanzamiento de pokéballs haciendo clic en el botón "
 ¿La ventaja? Se ejecuta en segundo plano. Puedes minimizar el navegador, estar jugando a otra cosa o trabajando en tu PC, y el script seguirá capturando sin mover tu ratón físico ni quitarte el foco de la pantalla.
 ---
 
-## 🛠️ Instrucciones de Instalación:
+## 🛠️ Instrucciones de Instalación para PC:
 Instala un gestor de scripts en tu navegador (Opera, Chrome, Brave o Edge):
 
 Descarga e instala la extensión  [![Descargar Tampermonkey](https://img.shields.io/badge/Descargar-Tampermonkey-black?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://www.tampermonkey.net/)
@@ -145,6 +145,55 @@ Ve al menú Archivo > Guardar (o presiona Ctrl + S).
 ---
 
 Por ultimo Click derecho en la extenesion, --> Administrar Extension --> activas la opcion de (Permitir secuencia de comandos de usuario).
+
+---
+
+## 🛠️ Instrucciones de Instalación para Dispositivo Moviles:
+
+🤖 Si usas Android (La opción más fácil)
+En Android la mejor opción es Kiwi Browser. Es un navegador basado en Chromium (es decir, es idéntico a Chrome), pero tiene la ventaja de que te deja instalar cualquier extensión de la Chrome Web Store de PC.
+
+Pasos para configurarlo:
+Entra en la Play Store y descarga Kiwi Browser.
+
+Abre Kiwi Browser y entra en la Chrome Web Store.
+
+Busca Tampermonkey e instálalo (se instalará exactamente igual que en el ordenador).
+
+Toca los tres puntos de arriba a la derecha en Kiwi, baja del todo y verás el icono de Tampermonkey. Entra en él.
+
+Crea un nuevo script, borra el texto por defecto, pega el código de la v2.0 y dale a Guardar (Ctrl+S o Archivo > Guardar).
+
+¡Listo! Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el juego se ve raro) y empezará a lanzar solo.
+
+--- 
+
+🍏 Si usas iPhone / iPad (iOS)
+En el ecosistema de Apple tienes dos opciones muy buenas:
+
+Opción A: Orion Browser (La más recomendada)
+Descarga Orion Browser desde la App Store (es un navegador ultrarrápido diseñado para iOS).
+
+Abre Orion, ve a la Chrome Web Store e instala Tampermonkey.
+
+Abre la extensión, añade el script v2.0 y guarda.
+
+Opción B: Safari + la app "Userscripts"
+Descarga la aplicación llamada Userscripts (es gratuita y tiene el icono de una </>) desde la App Store.
+
+Ve a los Ajustes de tu iPhone > Safari > Extensiones y activa "Userscripts".
+
+Abre Safari, toca el botón de las extensiones (el icono de las piezas de puzle o las letras aA), abre Userscripts y crea un nuevo script pegando el código de la v2.0.
+
+⚠️ Un aviso muy importante sobre el "Segundo Plano" en móviles
+A diferencia del ordenador, los sistemas operativos de los móviles (tanto Android como iOS) son ultra agresivos con el ahorro de batería.
+
+¿Qué significa esto? Si minimizas el navegador en el móvil, abres WhatsApp o bloqueas la pantalla, el móvil "congelará" la pestaña del juego casi de inmediato para no gastar batería, por lo que el script se pausará.
+
+La solución para farmear en el móvil: Si quieres dejarlo farmeando un rato mientras haces otras cosas (como comer o ver la tele), debes dejar el móvil con la pantalla encendida y el juego abierto en primer plano.
+
+Tip extra: Puedes bajar el brillo del teléfono al mínimo para no gastar batería ni quemar la pantalla mientras el script trabaja solo.
+
 
 ---
 
