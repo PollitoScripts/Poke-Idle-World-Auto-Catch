@@ -169,7 +169,7 @@ Toca los tres puntos de arriba a la derecha en Kiwi, baja del todo y verás el i
 
 Crea un nuevo script, borra el texto por defecto, pega el código de la v2.0 y dale a Guardar (Ctrl+S o Archivo > Guardar).
 
-¡Listo! Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el juego se ve raro) y empezará a lanzar solo.
+Abre la web del juego en Kiwi Browser, pon la vista en modo escritorio (si el juego se ve raro) y empezará a lanzar solo.
 
 --- 
 
@@ -186,12 +186,14 @@ Abre Orion, ve a la Chrome Web Store e instala Tampermonkey.
 
 Abre la extensión, añade el script v2.0 y guarda.
 
-Opción B: Safari + la app "Userscripts"
+## Opción B: Safari + la app "Userscripts"
 Descarga la aplicación llamada Userscripts (es gratuita y tiene el icono de una </>) desde la App Store.
 
 Ve a los Ajustes de tu iPhone > Safari > Extensiones y activa "Userscripts".
 
 Abre Safari, toca el botón de las extensiones (el icono de las piezas de puzle o las letras aA), abre Userscripts y crea un nuevo script pegando el código de la v2.0.
+
+¡Listo! Entra en Poke Idle World, recarga la página y verás cómo el juego lanza automáticamente cada vez que aparece el botón.
 
 ---
 
@@ -207,5 +209,3 @@ Tip extra: Puedes bajar el brillo del teléfono al mínimo para no gastar bater�
 
 
 ---
-
-¡Listo! Entra en Poke Idle World, recarga la página y verás cómo el juego lanza automáticamente cada vez que aparece el botón.
