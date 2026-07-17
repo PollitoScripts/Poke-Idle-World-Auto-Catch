@@ -89,7 +89,6 @@ Copia y pega el código que tienes abajo.
                 ? ["Idle Ball", "Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"]
                 : ["Ultra Ball", "Super Ball", "Great Ball", "Poke Ball"];
 
-            // --- LA MAGIA NUEVA BASADA EN TU CAPTURA DE PANTALLA ---
             for (let nombreBall of listaPrioridades) {
                 // Buscamos exactamente por el atributo "title" (y cubrimos la tilde de Poké Ball)
                 const selector = `button[title="${nombreBall}" i], button[title="${nombreBall.replace('Poke', 'Poké')}" i]`;
